@@ -1,0 +1,95 @@
+Here's the modified code for fuzzer1 using AFL:
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <fcntl.h>
+
+void animate(char *msg, unsigned char *program) {
+    // Your implementation of the animate function
+    // ...
+}
+
+int main(int argc, char **argv) {
+    if (argc < 2) {
+        printf("Usage: %s <input_file>\n", argv[0]);
+        return 1;
+    }
+
+    int input_fd = open(argv[1], O_RDONLY);
+    if (input_fd == -1) {
+        perror("Error opening input file");
+        return 1;
+    }
+
+    off_t input_size = lseek(input_fd, 0, SEEK_END);
+    if (input_size == -1) {
+        perror("Error getting input file size");
+        close(input_fd);
+        return 1;
+    }
+    lseek(input_fd, 0, SEEK_SET);
+
+    char *input_data = (char *)malloc(input_size);
+    if (input_data == NULL) {
+        perror("Error allocating memory for input data");
+        close(input_fd);
+        return 1;
+    }
+
+    ssize_t bytes_read = read(input_fd, input_data, input_size);
+    if (bytes_read == -1) {
+        perror("Error reading input file");
+        close(input_fd);
+        free(input_data);
+        return 1;
+    }
+    close(input_fd);
+
+    // Fuzzing loop
+    while (__AFL_LOOP(1000)) {
+        // Create a copy of the input data for mutation
+        char *fuzz_data = (char *)malloc(input_size);
+        if (fuzz_data == NULL) {
+            perror("Error allocating memory for fuzz data");
+            free(input_data);
+            return 1;
+        }
+        memcpy(fuzz_data, input_data, input_size);
+
+        // Mutate the fuzz data here (e.g., using AFL mutators or custom logic)
+
+        // Invoke the program with the mutated fuzz data
+        animate(fuzz_data, NULL);
+
+        free(fuzz_data);
+    }
+
+    free(input_data);
+    return 0;
+}
+
+//And here's the modified code for fuzzer2 using libFuzzer:
+#include <stdint.h>
+#include <stddef.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
+    char *msg = (char *)malloc(size + 1);
+    if (msg == NULL) {
+        perror("Error allocating memory for message");
+        return 0;
+    }
+
+    memcpy(msg, data, size);
+    msg[size] = '\0';
+
+    unsigned char program[] = {0x00, 0x00, 0x00};  // Replace with your program
+
+    animate(msg, program);
+
+    free(msg);
+
+    return 0;
+}
