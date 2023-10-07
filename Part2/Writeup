@@ -1,0 +1,20 @@
+We have analyzed the original program accurately, and here are two examples of how the program could potentially crash:
+
+1- Null Pointer Dereference Crash:
+
+In the setupgc() function, the examplegcd.gift_card_record_data variable is allocated memory as Follow:
+
+examplegcd.gift_card_record_data = malloc(examplegcd.number_of_gift_card_records);
+
+However, the allocation is insufficient because it doesn't account for the size of the `gift_card_record_data` structure. 
+As a result, when accessing `examplegcd.gift_card_record_data[0]`, it could lead to a null pointer dereference crash.
+
+And to trigger this crash, we modified the `setupgc()` function as shown in Crash1.gft file.
+
+2- File Write Crash:
+
+In the writegc() function, the program attempts to write data to a file named "examplefile.gft" without checking the return value of fopen().
+
+If there are any issues opening the file, such as insufficient permissions or disk space, it can lead to a crash.
+
+And to trigger this crash, we modified the writegc() function as shown in Crash2.gft file.
