@@ -1,27 +1,9 @@
-Test1:
-======
-Input:
-------------------------
-num_bytes: 10
-merchant_id: "ABC1234567890"
-customer_id: "XYZ9876543210"
-number_of_gift_card_records: 2
-record 1:
-    record_type: amount_change
-    amount_added: 50
-    signature: "ABCD1234"
-record 2:
-    record_type: message
-    message: "Hello, World!"
+// Prepare the Program: Compile the program with AFL's instrumentation using the AFL compiler wrapper
 
-Expected Output:
-------------------------
-Merchant ID: ABC1234567890
-Customer ID: XYZ9876543210
-Num records: 2
-   record_type: amount_change
-   amount_added: 50
-   signature: ABCD1234
-   record_type: message
-   message: Hello, World!
-   Total value: 50
+afl-gcc -o giftcardexamplewriter_fuzzed giftcardexamplewriter.c
+
+//Fuzz the Program:
+afl-fuzz -i input_dir -o output_dir ./giftcardexamplewriter_fuzzed
+
+//Monitor Fuzzing Progress:
+afl-whatsup output_dir
