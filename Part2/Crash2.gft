@@ -1,38 +1,16 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-
-void animate(char *msg, unsigned char *program) {
-    unsigned char regs[16];
-    char *mptr = msg;
-    unsigned char *pc = program;
-
-    while (pc < program + 256) {
-        unsigned char op, arg1, arg2;
-        op = *pc;
-        arg1 = *(pc + 1);
-        arg2 = *(pc + 2);
-
-        switch (*pc) {
-            // ...
-            case 0xFF:
-                // Attempt to access an invalid memory location
-                *(int *)0 = 42;  // Crash here
-                break;
-            // ...
-        }
-
-        pc += 3;
-        usleep(5000);
+// The program will crash, if we modify the writegc() function as follows:
+void writegc() {
+    FILE *fd1;
+    fd1 = fopen("examplefile.gft", "w");
+    if (fd1 != NULL) {
+        fwrite(&examplegc.num_bytes, 4, 1, fd1);
+        fwrite(examplegcd.merchant_id, 32, 1, fd1);
+        fwrite(examplegcd.customer_id, 32, 1, fd1);
+        fwrite(&examplegcd.number_of_gift_card_records, 4, 1, fd1);
+        fwrite(&examplegcrd.record_size_in_bytes, 4, 1, fd1);
+        fwrite(&examplegcrd.type_of_record, 4, 1, fd1);
+        fwrite(&examplegcac.amount_added, 4, 1, fd1);
+        fwrite(examplegcac.actual_signature, 32, 1, fd1);
+        fclose(fd1);
     }
-}
-
-int main() {
-    char msg[] = "Hello, World!";
-    unsigned char program[] = {0xFF, 0x00, 0x00};  // Invalid instruction
-
-    animate(msg, program);
-
-    return 0;
 }
