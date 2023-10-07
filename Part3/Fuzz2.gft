@@ -1,22 +1,46 @@
-Test2:
-======
+//This test case includes a null byte (\x00) in the input string. It aims to test how the program handles null bytes:
 
-Input:
-------------------------
-num_bytes: 6
-merchant_id: "MERCHANT"
-customer_id: "CUSTOMER"
-number_of_gift_card_records: 1
-record 1:
-    record_type: animated message
-    message: "Welcome!"
-    program: [0x01, 0x00, 0x00, 0x02, 0x00, 0x00, ...]
+g\x00iftcardexamplewriter
 
-Expected Output:
-------------------------
-Merchant ID: MERCHANT
-Customer ID: CUSTOMER
-Num records: 1
-   record_type: animated message
-   message: Welcome!
-   [running embedded program]
+// another Solution:
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+void setupgc() {
+    // Code for setting up gift card
+}
+
+void writegc() {
+    // Code for writing gift card data
+}
+
+int main(void) {
+    uint8_t *data = NULL;
+    size_t size = 0;
+
+    // Read the fuzzed data from AFL
+    while (__AFL_LOOP(1000)) {
+        if (__AFL_R(100) == 0) {
+            // Reset the data for a new test case
+            free(data);
+            data = NULL;
+            size = 0;
+        }
+
+        // Read the data from AFL into a dynamically allocated buffer
+        data = (uint8_t *)realloc(data, size + 1);
+        data[size] = getchar();
+        size++;
+
+        // Perform the fuzzing logic
+        setupgc();
+        writegc();
+    }
+
+    // Clean up
+    free(data);
+
+    return 0;
+}
