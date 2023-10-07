@@ -18,3 +18,11 @@ In the writegc() function, the program attempts to write data to a file named "e
 If there are any issues opening the file, such as insufficient permissions or disk space, it can lead to a crash.
 
 And to trigger this crash, we modified the writegc() function as shown in Crash2.gft file.
+
+To cause an infinite loop in the program, we modified the writegc() function as shown in Hang.gft file. 
+
+In this modified code, an infinite loop is introduced using the while (1) statement. 
+
+As a result, the program will keep looping indefinitely, preventing the execution from reaching the fwrite() and fclose() statements. 
+
+This causes the program to get stuck in the infinite loop, resulting in no further progress or termination.
